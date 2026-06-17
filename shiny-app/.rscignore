@@ -1,5 +1,0 @@
-*.log
-run-local.R
-.Rhistory
-.RData
-rsconnect/

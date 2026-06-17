@@ -129,7 +129,7 @@ main{margin-left:320px;padding:34px 50px 0}
 h1{font-family:Georgia,"Times New Roman",serif;font-size:4.45rem;line-height:1.05;color:#151A17}
 h1 span{color:var(--verde-medio)}
 .hero-copy p{margin-top:24px;max-width:650px;color:var(--cinza);font-size:1.08rem;line-height:1.85}
-.actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.actions{display:flex;gap:14px;margin-top:30px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 24px;border-radius:10px;font-weight:800;text-decoration:none;transition:.3s ease;border:0;cursor:pointer}
 .btn-primary{background:linear-gradient(135deg,var(--verde-medio),var(--verde-escuro));color:white;box-shadow:0 14px 28px rgba(127,166,83,.23)}
 .btn-light{color:var(--verde-escuro);background:white;border:1px solid var(--verde-suave)}
@@ -606,7 +606,7 @@ footer{padding:28px;text-align:center;color:#7d877e}
       <a href="#contato"><span class="icon">✉</span>Contato</a>
     </nav>
 
-    <div class="side-cta"><a href="https://3jux1o-renan-bueno.shinyapps.io/rb-diagnostico-dados/" target="_blank" rel="noopener noreferrer">Abrir diagnóstico interativo</a></div>
+    <div class="side-cta"><a href="https://mail.google.com/mail/?view=cm&fs=1&to=renanbbueno.rb@gmail.com&su=Solicita%C3%A7%C3%A3o%20de%20consultoria%20-%20RB%20Consultoria%20em%20Dados" target="_blank" rel="noopener noreferrer">Solicite sua consultoria</a></div>
 
     <div class="sidebar-socials">
       <a href="https://mail.google.com/mail/?view=cm&fs=1&to=renanbbueno.rb@gmail.com" target="_blank" rel="noopener noreferrer" aria-label="Enviar e-mail">
@@ -636,8 +636,7 @@ footer{padding:28px;text-align:center;color:#7d877e}
       <h1>Análise de dados para decisões que <span>transformam florestas.</span></h1>
       <p>Apoiamos pesquisadores, estudantes e profissionais na organização, análise e visualização de dados florestais, gerando informações confiáveis para pesquisas, projetos e tomada de decisão.</p>
       <div class="actions">
-        <a class="btn btn-primary" href="#consultoria">Solicitar Consultoria →</a>
-        <a class="btn btn-light" href="https://3jux1o-renan-bueno.shinyapps.io/rb-diagnostico-dados/" target="_blank" rel="noopener noreferrer">Diagnóstico interativo →</a>
+        <a class="btn btn-primary" href="https://mail.google.com/mail/?view=cm&fs=1&to=renanbbueno.rb@gmail.com&su=Solicita%C3%A7%C3%A3o%20de%20consultoria%20-%20RB%20Consultoria%20em%20Dados" target="_blank" rel="noopener noreferrer">Solicitar Consultoria →</a>
         <a class="btn btn-light" href="#dados">Saiba mais ♧</a>
       </div>
     </div>
@@ -776,7 +775,7 @@ footer{padding:28px;text-align:center;color:#7d877e}
       <input class="full" type="file">
       <button class="btn btn-primary full" type="submit">Enviar Solicitação →</button>
     </form>
-    <div id="status" class="status">Solicitação registrada visualmente. Na versão online, este formulário poderá ser integrado ao e-mail, WhatsApp, Google Forms ou banco de dados.</div>
+    <div id="status" class="status">Abriremos uma mensagem de e-mail com os dados preenchidos. Revise, anexe arquivos se necessário e envie.</div>
   </section>
 
   <section id="contato" class="section contact-section">
@@ -839,6 +838,32 @@ const form = document.getElementById("consultoriaForm");
 const statusBox = document.getElementById("status");
 form.addEventListener("submit", function(e){
   e.preventDefault();
+
+  const fields = [...form.querySelectorAll("input, select, textarea")];
+  const lines = fields
+    .filter(field => field.type !== "file")
+    .map(field => {
+      const label = field.placeholder || field.getAttribute("aria-label") || field.name || field.type;
+      const value = field.value && field.value.trim() ? field.value.trim() : "Não informado";
+      return `${label}: ${value}`;
+    });
+
+  const hasFile = form.querySelector('input[type="file"]')?.files?.length > 0;
+  if (hasFile) {
+    lines.push("Arquivo: o cliente selecionou um arquivo, mas precisa anexá-lo manualmente no e-mail.");
+  }
+
+  const subject = encodeURIComponent("Solicitação de consultoria - RB Consultoria em Dados");
+  const body = encodeURIComponent([
+    "Olá, Renan! Gostaria de solicitar uma consultoria em dados.",
+    "",
+    ...lines
+  ].join("\n"));
+
+  const url = `https://mail.google.com/mail/?view=cm&fs=1&to=renanbbueno.rb@gmail.com&su=${subject}&body=${body}`;
+  window.open(url, "_blank", "noopener,noreferrer");
+
+  statusBox.textContent = "Abrimos uma mensagem de e-mail com os dados preenchidos. Se você selecionou um arquivo, anexe-o manualmente antes de enviar.";
   statusBox.style.display = "block";
   statusBox.scrollIntoView({behavior:"smooth", block:"center"});
 });
